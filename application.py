@@ -35,62 +35,21 @@ db = SQL("sqlite:///final_project.db")
 
 
 @app.route("/", methods=["GET"])
-@login_required
+# @login_required
 def index():
-    """Show portfolio of stocks"""
+    """Show Tournament Information"""
 
-    if request.method == "GET":
 
-        user_stocks = []
+    return render_template("index.html")
 
-        stock_value_sum = 0.00
-        total_value = 0.00
-        user_cash = 0.00
-        stock_value = 0.00
+@app.route("/teams", methods=["GET"])
+def teams():
 
-        # Query the database for the username of the current sesion
-        check_username = db.execute("SELECT username FROM users WHERE id = :id", id=session["user_id"])
-
-        # Store the username string into a variable
-        username = check_username[0]["username"]
-
-        # Pull all of the stock data from the user's portfolio
-        stock_symbols = db.execute("SELECT stock FROM portfolio WHERE username = :username", username=username)
-
-        for stock in stock_symbols:
-            stock_symbol = stock["stock"]
-            stock_quote = lookup(stock["stock"])
-            stock_price = stock_quote["price"]
-            stock_name = stock_quote["name"]
-            shares = db.execute("SELECT shares FROM portfolio WHERE username = :username AND stock = :stock_symbol",
-                                username=username, stock_symbol=stock_symbol)
-            stock_shares = shares[0]['shares']
-            stock_value = stock_shares * stock_price
-
-            stock_dict = {
-                "name": stock_name,
-                "price": stock_price,
-                "symbol": stock_symbol,
-                "shares": stock_shares,
-                "price": usd(stock_price),
-                "value": usd(stock_value)
-            }
-
-            user_stocks.append(stock_dict)
-
-            stock_value_sum += stock_value
-
-        # Import the user's cash from the database
-        user_cash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
-
-        # Calculate the total value of user's cash and stocks
-        total_value = user_cash[0]["cash"] + stock_value_sum
-
-        return render_template("index.html", total_value=usd(total_value), user_stocks=user_stocks, user_cash=usd(user_cash[0]["cash"]))
+    return render_template("teams.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
-@login_required
+# @login_required
 def buy():
     """Buy shares of stock"""
 

@@ -6,38 +6,16 @@
 
 {% block main %}
 
-    <table>
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Name</th>
-                <th>Shares</th>
-                <th>Price</th>
-                <th>TOTAL</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <td colspan="4"></td>
-                <td>{{ total_value }}</td>
-            </tr>
-        </tfoot>
-        <tbody>
-            {% for stock in user_stocks %}
-            <tr>
-                <td>{{ stock.symbol }}</td>
-                <td>{{ stock.name }}</td>
-                <td>{{ stock.shares }}</td>
-                <td>{{ stock.price }}</td>
-                <td>{{ stock.value }}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td>CASH</td>
-                <td colspan="3"></td>
-                <td>{{ user_cash }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div>
+        <h1>
+            Tournament Information
+        </h1>
+    </div>
+    <div>
+        <h2>
+            Location
+        </h2>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d417678.4124660179!2d-90.25097658797998!3d35.12886358443457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87d57e1eea439745%3A0xd193f315601ab6fe!2sMemphis%2C+TN!5e0!3m2!1sen!2sus!4v1532890382713" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+    </div>
 
 {% endblock %}

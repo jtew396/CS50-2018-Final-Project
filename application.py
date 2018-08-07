@@ -245,6 +245,26 @@ def register():
         if not request.form.get("username"):
             return apology("Missing username!", 400)
 
+        # Ensure a team name was submitted
+        if not request.form.get("team_name"):
+            return apology("Missing username!", 400)
+
+        # Ensure a team city was submitted
+        if not request.form.get("team_city"):
+            return apology("Missing team city!", 400)
+
+        # Ensure a team state was submitted
+        if not request.form.get("team_state"):
+            return apology("Missing team state!", 400)
+
+        # Ensure a conference was submitted
+        if not request.form.get("conference"):
+            return apology("Missing team conference!", 400)
+
+        # Ensure a region was submitted
+        if not request.form.get("region"):
+            return apology("Missing team region!", 400)
+
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("Missing password!", 400)

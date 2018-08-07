@@ -5,13 +5,32 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/teams" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock Symbol" type="text"/>
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="shares" placeholder="# of Shares" type="text"/>
-        </div>
-        <button class="btn btn-primary" type="submit">Buy</button>
-    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Location</th>
+                <th>Conference</th>
+                <th>Region</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in user_stocks %}
+            <tr>
+                <td>{{ stock.symbol }}</td>
+                <td>{{ city }}, {{ state}}</td>
+                <td>{{ stock.shares }}</td>
+                <td>{{ stock.price }}</td>
+                <td>{{ stock.value }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>CASH</td>
+                <td colspan="3"></td>
+                <td>{{ user_cash }}</td>
+            </tr>
+        </tbody>
+    </table>
+
 {% endblock %}

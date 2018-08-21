@@ -35,7 +35,6 @@ db = SQL("sqlite:///final_project.db")
 
 
 @app.route("/", methods=["GET"])
-# @login_required
 def index():
     """Show Tournament Information"""
 

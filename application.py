@@ -45,6 +45,12 @@ def index():
 @app.route("/teams", methods=["GET"])
 def teams():
 
+    if request.method == "GET":
+
+        users = db.execute("SELECT team_name, team_city, team_state, conference, region FROM users")
+
+        return render_template("teams.html", users=users)
+
     return render_template("teams.html")
 
 
@@ -205,10 +211,10 @@ def logout():
     return redirect("/")
 
 
-@app.route("/quote", methods=["GET", "POST"])
+@app.route("/roster", methods=["GET", "POST"])
 @login_required
-def quote():
-    """Get stock quote."""
+def roster():
+    """Adjust the team roster."""
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -278,8 +284,11 @@ def register():
             return apology("Passwords must match!", 400)
 
         # Store the username in the database
-        result = db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)",
-                            username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")))
+        result = db.execute("INSERT INTO users (username, hash, team_name, team_city, team_state, conference, region) VALUES(:username, :hash, :team_name, :team_city, :team_state, :conference, :region)",
+                            username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")),
+                            team_name=request.form.get("team_name"), team_city=request.form.get("team_city"),
+                            team_state=request.form.get("team_state"), conference=request.form.get("conference"),
+                            region=request.form.get("region"))
         if not result:
             return apology("Username currently in use", 400)
 
@@ -295,7 +304,12 @@ def register():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("register.html")
+
+        states = db.execute("SELECT * FROM states")
+        print(states)
+
+
+        return render_template("register.html", states=states)
 
 
 @app.route("/sell", methods=["GET", "POST"])

@@ -17,9 +17,9 @@
         </div>
         <div class="form-group">
             <select name="team_state">
-                { for state in states }
-                <option value="{{ states.state }}">{{ states.state }}</option>
-                { endfor }
+                {% for state in states %}
+                <option value="{{ state.state }}">{{ state.state }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">

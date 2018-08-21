@@ -9,27 +9,21 @@
     <table>
         <thead>
             <tr>
-                <th>Team Name</th>
+                <th>Team</th>
                 <th>Location</th>
                 <th>Conference</th>
                 <th>Region</th>
             </tr>
         </thead>
         <tbody>
-            {% for stock in user_stocks %}
+            {% for user in users %}
             <tr>
-                <td>{{ stock.symbol }}</td>
-                <td>{{ city }}, {{ state}}</td>
-                <td>{{ stock.shares }}</td>
-                <td>{{ stock.price }}</td>
-                <td>{{ stock.value }}</td>
+                <td>{{ user.team_name }}</td>
+                <td>{{ user.team_city }}, {{ user.team_state}}</td>
+                <td>{{ user.conference }}</td>
+                <td>{{ user.region }}</td>
             </tr>
             {% endfor %}
-            <tr>
-                <td>CASH</td>
-                <td colspan="3"></td>
-                <td>{{ user_cash }}</td>
-            </tr>
         </tbody>
     </table>
 

@@ -106,6 +106,30 @@ def roster():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure that a player number was submitted
+        if not request.form.get("roster_number"):
+            return apology("Missing Player Number!", 400)
+
+        # Ensure that the player name was submitted
+        if not request.form.get("roster_name"):
+            return apology("Missing Player Name!", 400)
+
+        # Ensure that the player position was submitted
+        if not request.form.get("roster_position"):
+            return apology("Missing Player Position!", 400)
+
+        # Ensure that the player height was submitted
+        if not request.form.get("roster_height"):
+            return apology("Missing Player Height!", 400)
+
+        # Store the player in the roster database
+        result = db.execute("INSERT INTO roster (roster_number, roster_name, roster_position, roster_height) VALUES(:roster_number, :roster_name, :roster_position, :roster_height)",
+                            roster_number=request.form.get("roster_number"), roster_name=request.form.get("roster_name"),
+                            roster_position=request.form.get("roster_position"), roster_height=request.form.get("roster_height"))
+
+        # Query the roster database for the team's roster
+        roster = db.execute("")
+
         return render_template("roster.html")
 
     # User reached route via GET (as by clicking a link or via redirect)

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Roster
+{% endblock %}
+
+{% block main %}
+
+    <div>
+        <h1>
+            Add Player to the {{ team_name }} Roster
+        </h1>
+    </div>
+    <form action="/add_roster" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="roster_name" placeholder="Player Name" type="text"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="roster_number" placeholder="Player Number" type="text"/>
+        </div>
+        <div class="form-group">
+            <select name="roster_position">
+                {% for position in positions %}
+                <option value="{{ position.position }}">{{position.position}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Add Player</button>
+    </form>
+{% endblock %}

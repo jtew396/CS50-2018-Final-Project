@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Roster
+{% endblock %}
+
+{% block main %}
+
+    <div>
+        <h1>
+            Remove Player from the {{ team_name }} Roster
+        </h1>
+    </div>
+    <form action="/remove_roster" method="post">
+        <div class="form-group">
+            <select name="roster_position">
+                {% for roster in positions %}
+                <option value="{{ position.position }}">{{position.position}}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">Remove Player</button>
+        </div>
+    </form>
+{% endblock %}

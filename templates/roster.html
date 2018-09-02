@@ -14,35 +14,55 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">#</th>
                 <th scope="col">Name</th>
+                <th scope="col">Roster #</th>
                 <th scope="col">Position</th>
-                <th scope="col">Height</th>
+                <th scope="col">Add/Remove</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
+            {% for player in roster %}
             <tr>
-                <td>{{ user.team_name }}</td>
-                <td>{{ user.team_city }}, {{ user.team_state}}</td>
-                <td>{{ user.conference }}</td>
-                <td>{{ user.region }}</td>
+                <td>{{ player.roster_name }}</td>
+                <td>{{ player.roster_number }}</td>
+                <td>{{ player.roster_position }}</td>
+                <td>
+                    <form action="/remove_roster" method="post">
+                         <input type="hidden" name="player_id" value="{{ player.player_id }}">
+                        <button class="btn btn-primary" type="submit">Remove</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
             <tr>
-                <td class="form_group">
-                    <input autocomplete="off" autofocus class="form-control" name="roster_number" placeholder="#" type="text"/>
-                </td>
-                <td class="form_group">
-                    <input autocomplete="off" autofocus class="form-control" name="roster_name" placeholder="Name" type="text"/>
-                </td>
-                <td class="form_group">
-                    <input autocomplete="off" autofocus class="form-control" name="roster_position" placeholder="Position" type="text"/>
-                </td>
-                <td class="form_group">
-                    <input autocomplete="off" autofocus class="form-control" name="roster_height" placeholder="Height" type="text"/>
-                </td>
+
             </tr>
+                <form action="/roster" method="post">
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <input autocomplete="off" autofocus class="form-control" name="roster_name" placeholder="Player Name" type="text"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <input class="form-control" name="roster_number" placeholder="#" type="number"/>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <select name="roster_position">
+                                    {% for position in positions %}
+                                    <option value="{{ position.position }}">{{position.position}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="submit">Add</button>
+                        </td>
+                    </tr>
+                </form>
         </tbody>
     </table>
 

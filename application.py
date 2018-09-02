@@ -35,19 +35,46 @@ db = SQL("sqlite:///final_project.db")
 def index():
     """Show Tournament Information"""
 
-
     return render_template("index.html")
 
-@app.route("/teams", methods=["GET"])
+@app.route("/teams", methods=["GET", "POST"])
 def teams():
+    """Show the Registered Teams"""
+
+    if request.method == "POST":
+
+        return render_template("teams.html")
 
     if request.method == "GET":
 
         users = db.execute("SELECT team_name, team_city, team_state, conference, region FROM users")
 
+        # Query the database for the registered teams
         return render_template("teams.html", users=users)
 
     return render_template("teams.html")
+
+
+@app.route("/team_roster", methods=["GET", "POST"])
+def team_roster():
+    """Show Team Roster"""
+
+    if request.method == "POST":
+
+        # Gather the team name from the form request
+        team_name = request.form.get("team_name")
+
+        # Query the roster database for the team's roster
+        roster = db.execute("SELECT * FROM roster WHERE team_name = :team_name", team_name=team_name)
+
+        return render_template("team_roster.html", team_name=team_name, roster=roster)
+
+    else:
+
+        # Query the database for the registered teams
+        users = db.execute("SELECT team_name, team_city, team_state, conference, region FROM users")
+
+        return render_template("teams.html", users=users)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -101,7 +128,7 @@ def logout():
 @app.route("/roster", methods=["GET", "POST"])
 @login_required
 def roster():
-    """Adjust the team roster."""
+    """Display the team roster."""
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -118,26 +145,112 @@ def roster():
         if not request.form.get("roster_position"):
             return apology("Missing Player Position!", 400)
 
-        # Ensure that the player height was submitted
-        if not request.form.get("roster_height"):
-            return apology("Missing Player Height!", 400)
+        # Query database for the user's team
+        team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
 
         # Store the player in the roster database
-        result = db.execute("INSERT INTO roster (roster_number, roster_name, roster_position, roster_height) VALUES(:roster_number, :roster_name, :roster_position, :roster_height)",
-                            roster_number=request.form.get("roster_number"), roster_name=request.form.get("roster_name"),
-                            roster_position=request.form.get("roster_position"), roster_height=request.form.get("roster_height"))
+        result = db.execute("INSERT INTO roster (team_name, roster_number, roster_name, roster_position) VALUES(:team_name, :roster_number, :roster_name, :roster_position)",
+                            team_name=team_name[0]["team_name"], roster_number=request.form.get("roster_number"),
+                            roster_name=request.form.get("roster_name"), roster_position=request.form.get("roster_position"))
+
+        if not result:
+            return apology("Unable to Add Player to Roster", 400)
 
         # Query the roster database for the team's roster
-        roster = db.execute("")
+        roster = db.execute("SELECT * FROM roster WHERE team_name = :team_name", team_name=team_name[0]["team_name"])
 
-        return render_template("roster.html")
+        # Query the positions database for the positions
+        positions = db.execute("SELECT * FROM positions")
+
+        return render_template("roster.html", team_name=team_name[0]["team_name"], positions=positions, roster=roster)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
 
         team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
 
-        return render_template("roster.html", team_name=team_name[0]["team_name"])
+        # Query the roster database for the team's roster
+        roster = db.execute("SELECT * FROM roster WHERE team_name = :team_name", team_name=team_name[0]["team_name"])
+
+        # Query the positions database for the positions
+        positions = db.execute("SELECT * FROM positions")
+
+        return render_template("roster.html", team_name=team_name[0]["team_name"], positions=positions, roster=roster)
+
+
+@app.route("/add_roster", methods=["GET", "POST"])
+@login_required
+def add_roster():
+    """Add Players to Roster"""
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure that a player number was submitted
+        if not request.form.get("roster_number"):
+            return apology("Missing Player Number!", 400)
+
+        # Ensure that the player name was submitted
+        if not request.form.get("roster_name"):
+            return apology("Missing Player Name!", 400)
+
+        # Ensure that the player position was submitted
+        if not request.form.get("roster_position"):
+            return apology("Missing Player Position!", 400)
+
+        # Query database for the user's team
+        team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
+
+        # Store the player in the roster database
+        result = db.execute("INSERT INTO roster (team_name, roster_number, roster_name, roster_position) VALUES(:team_name, :roster_number, :roster_name, :roster_position)",
+                            team_name=team_name[0]["team_name"], roster_number=request.form.get("roster_number"),
+                            roster_name=request.form.get("roster_name"), roster_position=request.form.get("roster_position"))
+
+        if not result:
+            return apology("Unable to Add Player to Roster", 400)
+
+        return render_template("roster.html")
+
+    else:
+
+        team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
+
+        positions = db.execute("SELECT * FROM positions")
+
+        return render_template("add_roster.html", team_name=team_name[0]["team_name"], positions=positions)
+
+
+@app.route("/remove_roster", methods=["GET", "POST"])
+@login_required
+def remove_roster():
+    """Remove a Player from Roster"""
+
+    if request.method == "POST":
+
+        # Remove the player from the roster database
+        remove = db.execute("DELETE FROM roster WHERE player_id = :player_id", player_id=request.form.get("player_id"))
+
+        # Query the team name
+        team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
+
+        # Query the roster database for the team's roster
+        roster = db.execute("SELECT * FROM roster WHERE team_name = :team_name", team_name=team_name[0]["team_name"])
+
+        positions = db.execute("SELECT * FROM positions")
+
+        return render_template("roster.html", team_name=team_name[0]["team_name"], roster=roster, positions=positions)
+
+    else:
+
+        # Query the team name
+        team_name = db.execute("SELECT team_name FROM users WHERE id = :id", id=session["user_id"])
+
+        # Query the roster database for the team's roster
+        roster = db.execute("SELECT * FROM roster WHERE team_name = :team_name", team_name=team_name[0]["team_name"])
+
+        positions = db.execute("SELECT * FROM positions")
+
+        return render_template("roster.html", team_name=team_name[0]["team_name"], positions=positions)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -209,8 +322,6 @@ def register():
     else:
 
         states = db.execute("SELECT * FROM states")
-        print(states)
-
 
         return render_template("register.html", states=states)
 
